@@ -1,0 +1,94 @@
+﻿@using System.ComponentModel.DataAnnotations
+@inject IMasterService MasterService
+
+<Modal Title="@($"{(IsEdit ? "Edit" :"Add")} Designation")" IsOpen="@IsModalOpen" IsOpenChanged="HandleModalToggle">
+    <BodyContent>
+        <EditForm Model="Input" method="post" OnValidSubmit="SubmitDesignation" FormName="Designation">
+            <DataAnnotationsValidator />
+            <div class="row">
+                <div class="col-sm-6">
+                    <div class="form-group">
+                        <label for="email" class="form-label">Name</label>
+                        <InputText @bind-Value="Input.Name" class="form-control" placeholder="Designation Name" />
+                        <ValidationMessage For="() => Input.Name" class="text-danger" />
+                    </div>
+                </div>
+                <div class="col-sm-6">
+                    <div class="form-group">
+                        <label for="password" class="form-label">&nbsp;</label>
+                        <div class="form-check">
+                            <InputCheckbox id="isActive" @bind-Value="Input.IsActive" class="form-check-input" type="checkbox" />
+                            <label class="form-check-label" for="isActive">Active</label>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="modal-footer text-right">
+                <button type="submit" class="btn btn-primary">Submit</button>
+                <button type="button" class="btn btn-default" @onclick="Cancel">Cancel </button>
+            </div>
+        </EditForm>
+    </BodyContent>
+</Modal>
+
+@code{
+    [Parameter]
+    public EventCallback<bool> SaveChanged { get; set; }
+
+    [SupplyParameterFromForm]
+    private DesignationRequestDto Input { get; set; } = new();
+
+    private bool IsEdit { get; set; } = false;
+    public bool IsModalOpen { get; set; }
+
+    protected override async Task OnInitializedAsync()
+    {
+    }
+
+    private async Task HandleModalToggle(bool isOpen)
+    {
+        IsModalOpen = isOpen;
+        await SaveChanged.InvokeAsync();
+        //return Task.CompletedTask;
+    }
+
+    private void HandleConfirm()
+    {
+        IsModalOpen = false;
+    }
+    private async Task Cancel()
+    {
+        IsModalOpen = false;
+        await SaveChanged.InvokeAsync(false);
+    }
+
+    public void AddDesignation()
+    {
+        IsModalOpen = true;
+        IsEdit = false;
+        Input = new();
+    }
+
+    public void EditDesignation(DesignationResponseDto model)
+    {
+        IsModalOpen = true;
+        IsEdit = true;
+        Input = new()
+        {
+            Id = model.Id,
+            Name = model.Name,
+            IsActive = model.IsActive
+        };
+    }
+
+    public async Task SubmitDesignation()
+    {
+        var result = await MasterService.ManageDesignation(Input);
+        if (result != null && result.IsSuccess)
+        {
+            IsModalOpen = false;
+            await SaveChanged.InvokeAsync(result.Data);
+        }
+    }
+}
