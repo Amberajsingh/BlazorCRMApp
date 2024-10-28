@@ -118,6 +118,7 @@ namespace Blazor.API.Controllers
                 {
                     try
                     {
+
                         //#region For User
                         //short emailId = (byte)EmailTemplateType.UserAccountCreation;
                         //EmailTemplateDto emailDto = _emailTemplateService.GetTemplate(emailId);
