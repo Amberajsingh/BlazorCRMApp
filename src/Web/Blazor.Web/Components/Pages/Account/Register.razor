@@ -1,5 +1,4 @@
 ﻿@page "/register"
-@inject IUserService userService
 
 <section class="vh-100">
     <div class="container-fluid h-custom">
@@ -42,6 +41,18 @@
                         </div>
                         <div class="col-sm-6">
                             <div class="form-group">
+                                <label for="email" class="form-label">Country</label>
+                                <InputSelect @bind-Value="Input.CountryId"  class="form-control"  >
+                                    <option value="">Please select</option> @foreach (var country in countries)
+                                    {
+                                        <option value="@country">@country</option>
+                                    }
+                                </InputSelect>
+                                <ValidationMessage For="() => Input.CountryId" class="text-danger" />
+                            </div>
+                        </div>
+                        <div class="col-sm-6">
+                            <div class="form-group">
                                 <label for="email" class="form-label">Password</label>
                                 <InputText @bind-Value="Input.Password" class="form-control" placeholder="First Name" />
                                 <ValidationMessage For="() => Input.Password" class="text-danger" />
@@ -78,11 +89,18 @@
 @code {
     [Inject]
     NavigationManager NavigationManager { get; set; }
+    [Inject] IUserService userService { get; set; }
+    [Inject] IMasterService masterService { get; set; }
 
     [SupplyParameterFromForm]
     private UsersDto Input { get; set; } = new();
 
     public string errorMessage = string.Empty;
+
+    private List<SelectListDto> countries = new(); 
+    protected override async Task OnInitializedAsync() { 
+        countries = (await masterService.GetCountries()).Data;
+    }
 
     public async Task SubmitUser()
     {

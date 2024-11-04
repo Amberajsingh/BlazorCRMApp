@@ -9,6 +9,7 @@ namespace Blazor.Web.Services
         Task<BaseApiResponseDto<DesignationResponseDto>> GetDesignationById(int id);
         Task<BaseApiResponseDto<bool>> ManageDesignation(DesignationRequestDto model);
         Task<BaseApiResponseDto<bool>> DeleteDesignation(int id);
+        Task<BaseApiResponseDto<List<SelectListDto>>> GetCountries();
         #endregion
     }
     public class MasterService : IMasterService
@@ -41,5 +42,9 @@ namespace Blazor.Web.Services
         }
         #endregion
 
+        public async Task<BaseApiResponseDto<List<SelectListDto>>> GetCountries()
+        {
+            return await httpService.GetAsync<List<SelectListDto>>($"Master/GetCountries");
+        }
     }
 }
