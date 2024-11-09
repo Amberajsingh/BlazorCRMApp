@@ -32,7 +32,7 @@ namespace Shared.Lib.Dto
         public string Mobile { get; set; } = null!;
 
         [DisplayName("Date Of Birth")]
-
+        [Required]
         public DateTime? Dob { get; set; }
 
         public string? ShortUrl { get; set; }

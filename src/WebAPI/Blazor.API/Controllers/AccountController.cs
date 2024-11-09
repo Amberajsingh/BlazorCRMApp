@@ -51,54 +51,26 @@ namespace Blazor.API.Controllers
 
             try
             {
-                bool isExist = model.Id != 0 && model.UserLoginId.HasValue;
-
                 var userLogin = new UserLogin();
                 var user = new Users();
-                if (isExist)
-                {
-                    userLogin = _userLoginService.GetUserById(model.UserLoginId!.Value);
-                    user = _userService.GetUserById(model.Id!.Value);
-                }
-
-                //string profilePic = "";
-                //if (model.ProfilePic != null)
-                //{
-                //    if (model.ProfilePic.Length > 0)
-                //    {
-                //        var profileExten = new[] { ".jpg", ".png", ".jpeg" };
-                //        var ext = Path.GetExtension(model.ProfilePic.FileName).ToLower();
-
-                //        if (!profileExten.Contains(ext))
-                //        {
-                //            ModelState.AddModelError("", $"Profile image not valid, Please choose jpg,png,jpeg format");
-                //            return CreateModelStateErrors();
-                //        }
-                //        else
-                //        {
-                //            profilePic = await this.UploadFiles(_env, model.ProfilePic, "", "UserProfilePic", "");
-                //        }
-                //    }
-                //}
 
                 if (model.Id == null || model.Id == 0)
                 {
                     string salt = PasswordHasher.GenerateSalt();
                     userLogin.Password = PasswordHasher.GeneratePassword(model.Password, salt);
                     userLogin.PasswordSalt = salt;
-                    userLogin.IsVerifiedEmail = false;
+                    userLogin.IsVerifiedEmail = true;
+
+                    userLogin.IsVerified = true;
+                    userLogin.IsActive = true;
                 }
                 userLogin.RoleType = (int)UserRoleType.User;
-                userLogin.IsVerified = model.IsVerified;
-                userLogin.IsActive = model.IsActive;
-                userLogin.Username = isExist ? userLogin.Username : model.Email;
+                userLogin.Username = model.Email;
 
-                var result = isExist ? _userLoginService.UpdateUserLogin(userLogin) : _userLoginService.SaveUserLogin(userLogin);
-
-                user.UserLoginId = result;
+                //user.UserLoginId = result;
                 user.FirstName = model.FirstName;
                 user.LastName = model.LastName;
-                user.Email = isExist ? user.Email : model.Email;
+                user.Email = model.Email;
                 user.Mobile = model.Mobile;
                 user.Dob = Convert.ToDateTime(model.Dob);
                 user.ShortUrl = model.ShortUrl;
@@ -108,62 +80,17 @@ namespace Blazor.API.Controllers
                 user.CityId = model.CityId;
                 user.Address = model.Address;
                 user.ZipCode = model.ZipCode;
-                //user.ProfilePic = !string.IsNullOrEmpty(profilePic) ? profilePic : user.ProfilePic;
                 user.DesignationId = model.DesignationId == 0 ? null : model.DesignationId;
                 user.ParentId = model.ParentId == Guid.Empty ? null : model.ParentId;
                 user.Colour = model.Colour;
-                var result2 = isExist ? this._userService.UpdateUsers(user) : this._userService.SaveUsers(user);
-                string errorMsg = "";
-                if (model.Id == 0)
-                {
-                    try
-                    {
+                user.CreateDate = DateTime.UtcNow;
+                user.ModifyDate = DateTime.UtcNow;
 
-                        //#region For User
-                        //short emailId = (byte)EmailTemplateType.UserAccountCreation;
-                        //EmailTemplateDto emailDto = _emailTemplateService.GetTemplate(emailId);
+                userLogin.UsersUserLogin.Add(user);
+                var result = _userLoginService.SaveUserLogin(userLogin);
 
-                        //if (emailDto != null && emailDto.IsActive)
-                        //{
-                        //    string html = emailDto.Content;
-
-                        //    string siteUrl = SiteKeys.Domain;
-
-                        //    //string verifyLink = SiteKeys.Domain + "account/verifyuseremail?" + EncryptDecrypt.EncryptURL(Convert.ToString(result));
-                        //    string clickhere = "please <a href='" + SiteKeys.Domain + "account/verifyuseremail?" + EncryptDecrypt.EncryptURL(Convert.ToString(result)) + "' target='_blank'>Click Here</a>";
-
-                        //    html = html.Replace("##name##", $"{user.FirstName} {user.LastName}".Replace("  ", " ")).Replace("##sitename##", "LMS Platform")
-                        //     .Replace("##username##", user.Email).Replace("##password##", model.Password).Replace("##siteurl##", siteUrl).Replace("##date##", DateTime.Now.Year.ToString()).Replace("##verifylink##", clickhere);
-
-                        //    await Common.Common.SendWelComeMail(model.Email, emailDto.EmailSubject, html);
-                        //}
-                        //#endregion
-                        //if (model.FormType == true)
-                        //{
-                        //    #region For Admin
-                        //    short emailAdmin = (byte)EmailTemplateType.UserAccountCreationForAdmin;
-                        //    EmailTemplateDto emailDtoAdmin = _emailTemplateService.GetTemplate(emailId);
-                        //    var userAdmin = _userLoginService.GetUserByRole((int)UserRoleType.Admin);
-
-                        //    if (emailDto != null && emailDto.IsActive)
-                        //    {
-                        //        string html = emailDto.Content;
-
-                        //        string siteUrl = SiteKeys.Domain;
-
-                        //        html = html.Replace("##name##", $"Admin").Replace("##sitename##", "LMS Platform")
-                        //         .Replace("##username##", user.Email).Replace("##password##", model.Password).Replace("##siteurl##", siteUrl).Replace("##date##", DateTime.Now.Year.ToString());
-
-                        //        await Common.Common.SendWelComeMail(userAdmin.Username, emailDto.EmailSubject, html);
-                        //    }
-                        //    #endregion
-                        //}
-                    }
-                    catch (Exception ex)
-                    {
-                        errorMsg = user.Email;
-                    }
-                }
+                
+                //this._userService.SaveUsers(user);
 
                 return SuccessResult(true, "Signup was successful.");
             }
@@ -204,14 +131,14 @@ namespace Blazor.API.Controllers
                 {
                     return BadRequestErrorResult("Your account is not activated now. Please contact to admin.");
                 }
-                if (user.RoleType == (int)UserRoleType.User && user.DesignationId == null)
-                {
-                    return BadRequestErrorResult("Your designation is not defined. Please contact to admin.");
-                }
-                if (user.RoleType == (int)UserRoleType.User && user.ParentId == null)
-                {
-                    return BadRequestErrorResult("Your reporting person is not defined. Please contact to admin.");
-                }
+                //if (user.RoleType == (int)UserRoleType.User && user.DesignationId == null)
+                //{
+                //    return BadRequestErrorResult("Your designation is not defined. Please contact to admin.");
+                //}
+                //if (user.RoleType == (int)UserRoleType.User && user.ParentId == null)
+                //{
+                //    return BadRequestErrorResult("Your reporting person is not defined. Please contact to admin.");
+                //}
 
                 LoginResponseDto responseModel = new LoginResponseDto();
 

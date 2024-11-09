@@ -5,12 +5,15 @@ namespace Blazor.Web.Services
     public interface IMasterService
     {
         #region [Designation]
-        Task<BaseApiResponseDto<List<DesignationResponseDto>>> GetDesignations();
+        Task<BaseApiResponseDto<PageResponseViewModel<DesignationResponseDto>>> GetDesignations(ListingFilterDto filterDto);
         Task<BaseApiResponseDto<DesignationResponseDto>> GetDesignationById(int id);
         Task<BaseApiResponseDto<bool>> ManageDesignation(DesignationRequestDto model);
         Task<BaseApiResponseDto<bool>> DeleteDesignation(int id);
-        Task<BaseApiResponseDto<List<SelectListDto>>> GetCountries();
+
         #endregion
+        Task<BaseApiResponseDto<List<SelectListDto>>> GetCountries();
+        Task<BaseApiResponseDto<List<SelectListDto>>> GetStates(int countryId);
+        Task<BaseApiResponseDto<List<SelectListDto>>> GetCities(int stateId);
     }
     public class MasterService : IMasterService
     {
@@ -23,9 +26,9 @@ namespace Blazor.Web.Services
         }
 
         #region [Designation]
-        public async Task<BaseApiResponseDto<List<DesignationResponseDto>>> GetDesignations()
+        public async Task<BaseApiResponseDto<PageResponseViewModel<DesignationResponseDto>>> GetDesignations(ListingFilterDto filterDto)
         {
-            return await httpService.GetAsync<List<DesignationResponseDto>>($"Master/GetDesignations");
+            return await httpService.PostAsync<PageResponseViewModel<DesignationResponseDto>>($"Master/GetDesignations", filterDto);
         }
         public async Task<BaseApiResponseDto<DesignationResponseDto>> GetDesignationById(int id)
         {
@@ -45,6 +48,16 @@ namespace Blazor.Web.Services
         public async Task<BaseApiResponseDto<List<SelectListDto>>> GetCountries()
         {
             return await httpService.GetAsync<List<SelectListDto>>($"Master/GetCountries");
+        }
+        
+        public async Task<BaseApiResponseDto<List<SelectListDto>>> GetStates(int countryId)
+        {
+            return await httpService.GetAsync<List<SelectListDto>>($"Master/GetStates?countryId={countryId}");
+        }
+
+        public async Task<BaseApiResponseDto<List<SelectListDto>>> GetCities(int stateId)
+        {
+            return await httpService.GetAsync<List<SelectListDto>>($"Master/GetCities?stateId={stateId}");
         }
     }
 }

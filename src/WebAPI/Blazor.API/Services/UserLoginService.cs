@@ -38,7 +38,7 @@ namespace Blazor.API.Services
             {
                 Guid userId = Guid.NewGuid();
                 user.Id = userId;
-                user.ForgetPasswordLink = "www.google.com";
+                user.ForgetPasswordLink = "";
                 user.CreateDate = DateTime.UtcNow;
                 user.ModifyDate = DateTime.UtcNow;
                 _DBContext.UserLogin.Add(user);
@@ -101,11 +101,14 @@ namespace Blazor.API.Services
                 else if (loginuser.RoleType == (int)UserRoleType.User)
                 {
                     var user = loginuser.UsersUserLogin.FirstOrDefault();
-                    userLogin.Name = $"{user.FirstName} {user.LastName}".Replace("  ", " ");
-                    userLogin.ProfileImage = !string.IsNullOrEmpty(user.ProfilePic) ? $"/DYF/UserProfilePic/{user.ProfilePic}" : "/admin/images/default-user-img.jpg";
-                    userLogin.UserId = user.Id;
-                    userLogin.DesignationId = user.DesignationId;
-                    userLogin.ParentId = user.ParentId;
+                    if (user != null)
+                    {
+                        userLogin.Name = $"{user.FirstName} {user.LastName}".Replace("  ", " ");
+                        userLogin.ProfileImage = !string.IsNullOrEmpty(user.ProfilePic) ? $"/DYF/UserProfilePic/{user.ProfilePic}" : "/admin/images/default-user-img.jpg";
+                        userLogin.UserId = user.Id;
+                        userLogin.DesignationId = user.DesignationId;
+                        userLogin.ParentId = user.ParentId;
+                    }
                 }
             }
             else

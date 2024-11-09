@@ -3,11 +3,11 @@
 <section class="vh-100">
     <div class="container-fluid h-custom">
         <div class="row d-flex justify-content-center align-items-center h-100">
-            <div class="col-md-9 col-lg-6 col-xl-5">
+            @* <div class="col-md-9 col-lg-6 col-xl-5">
                 <img src="https://mdbcdn.b-cdn.net/img/Photos/new-templates/bootstrap-login-form/draw2.webp"
                      class="img-fluid" alt="Sample image">
-            </div>
-            <div class="col-md-8 col-lg-6 col-xl-4 offset-xl-1">
+            </div> *@
+            <div class="col-md-8 offset-xl-1">
                 <EditForm Model="Input" OnValidSubmit="SubmitUser">
                     <DataAnnotationsValidator />
                     @if (!string.IsNullOrWhiteSpace(errorMessage))
@@ -18,47 +18,103 @@
                         <br />
                     }
                     <div class="row">
-                        <div class="col-sm-6">
+                        <div class="col-sm-4">
                             <div class="form-group">
-                                <label for="email" class="form-label">First Name</label>
+                                <label for="firstname" class="form-label">First Name</label>
                                 <InputText @bind-Value="Input.FirstName" class="form-control" placeholder="First Name" />
                                 <ValidationMessage For="() => Input.FirstName" class="text-danger" />
                             </div>
                         </div>
-                        <div class="col-sm-6">
+                        <div class="col-sm-4">
                             <div class="form-group">
-                                <label for="email" class="form-label">Last Name</label>
-                                <InputText @bind-Value="Input.LastName" class="form-control" placeholder="First Name" />
+                                <label for="lastname" class="form-label">Last Name</label>
+                                <InputText @bind-Value="Input.LastName" class="form-control" placeholder="Last Name" />
                                 <ValidationMessage For="() => Input.LastName" class="text-danger" />
                             </div>
                         </div>
-                        <div class="col-sm-6">
+                        <div class="col-sm-4">
                             <div class="form-group">
                                 <label for="email" class="form-label">Email</label>
-                                <InputText @bind-Value="Input.Email" class="form-control" placeholder="First Name" />
+                                <InputText @bind-Value="Input.Email" class="form-control" placeholder="Email" />
                                 <ValidationMessage For="() => Input.Email" class="text-danger" />
                             </div>
                         </div>
-                        <div class="col-sm-6">
+                        <div class="col-sm-4">
                             <div class="form-group">
-                                <label for="email" class="form-label">Country</label>
-                                <InputSelect @bind-Value="Input.CountryId"  class="form-control"  >
-                                    <option value="">Please select</option> @foreach (var country in countries)
+                                <label for="country" class="form-label">Country</label>
+
+                                @* <InputSelect @bind-Value="Input.CountryId" @onchange="OnCountryChange" class="form-control"> *@
+                                <select @onchange="OnCountryChange" class="form-control">
+                                    <option value="">Please select</option> 
+                                    @foreach (var country in countries)
                                     {
-                                        <option value="@country">@country</option>
+                                        <option value="@country.Value">@country.Text</option>
                                     }
-                                </InputSelect>
+                                </select>
                                 <ValidationMessage For="() => Input.CountryId" class="text-danger" />
                             </div>
                         </div>
-                        <div class="col-sm-6">
+                        <div class="col-sm-4">
                             <div class="form-group">
-                                <label for="email" class="form-label">Password</label>
-                                <InputText @bind-Value="Input.Password" class="form-control" placeholder="First Name" />
-                                <ValidationMessage For="() => Input.Password" class="text-danger" />
+                                <label for="state" class="form-label">State</label>
+                                <select @onchange="OnStateChange" class="form-control">
+                                    <option value="">Please select</option> @foreach (var state in states)
+                                    {
+                                        <option value="@state.Value">@state.Text</option>
+                                    }
+                                </select>
+                                <ValidationMessage For="() => Input.StateId" class="text-danger" />
                             </div>
                         </div>
-                        <div class="col-sm-6">
+                        <div class="col-sm-4">
+                            <div class="form-group">
+                                <label for="city" class="form-label">City</label>
+                                <InputSelect @bind-Value="Input.CityId" class="form-control">
+                                    <option value="">Please select</option> @foreach (var city in cities)
+                                    {
+                                        <option value="@city.Value">@city.Text</option>
+                                    }
+                                </InputSelect>
+                                <ValidationMessage For="() => Input.CityId" class="text-danger" />
+                            </div>
+                        </div>
+                        <div class="col-sm-4">
+                            <div class="form-group">
+                                <label for="password" class="form-label">Password</label>
+                                <InputText type="password"  @bind-Value="Input.Password" class="form-control" placeholder="Password" />
+                                <ValidationMessage For="() => Input.Password" class="text-danger" />
+                            </div>
+                        </div> 
+                        <div class="col-sm-4">
+                            <div class="form-group">
+                                <label for="mobile" class="form-label">Mobile</label>
+                                <InputText  @bind-Value="Input.Mobile" class="form-control" placeholder="mobile" />
+                                <ValidationMessage For="() => Input.Mobile" class="text-danger" />
+                            </div>
+                        </div>
+                        <div class="col-sm-4">
+                            <div class="form-group">
+                                <label for="dob" class="form-label">Date of birth</label>
+                                <InputDate @bind-Value="Input.Dob" class="form-control" placeholder="Date of birth" />
+                                <ValidationMessage For="() => Input.Dob" class="text-danger" />
+                            </div>
+                        </div>
+                        <div class="col-sm-4">
+                            <div class="form-group">
+                                <label for="Zipcode" class="form-label">ZipCode</label>
+                                <InputText @bind-Value="Input.ZipCode" class="form-control" placeholder="ZipCode" />
+                                <ValidationMessage For="() => Input.ZipCode" class="text-danger" />
+                            </div>
+                        </div>
+                        <div class="col-sm-4">
+                            <div class="form-group">
+                                <label for="Address" class="form-label">Address</label>
+                                <InputText @bind-Value="Input.Address" class="form-control" placeholder="Address" />
+                                <ValidationMessage For="() => Input.Address" class="text-danger" />
+                            </div>
+                        </div>
+
+                        <div class="col-sm-4">
                             <div class="form-group">
                                 <label for="password" class="form-label">&nbsp;</label>
                                 <div class="form-check">
@@ -98,6 +154,8 @@
     public string errorMessage = string.Empty;
 
     private List<SelectListDto> countries = new(); 
+    private List<SelectListDto> states = new(); 
+    private List<SelectListDto> cities = new(); 
     protected override async Task OnInitializedAsync() { 
         countries = (await masterService.GetCountries()).Data;
     }
@@ -110,6 +168,23 @@
             errorMessage = "success";
             // IsModalOpen = false;
             // await SaveChanged.InvokeAsync(result.Data);
+        }
+    }
+
+    private async Task OnCountryChange(ChangeEventArgs e)
+    {
+        if (e.Value != null && !string.IsNullOrWhiteSpace(e.Value.ToString()))
+        {
+            Input.CountryId = Convert.ToInt32(e.Value);
+            states = (await masterService.GetStates(Input.CountryId)).Data;
+        }
+    }
+    public async Task OnStateChange(ChangeEventArgs e)
+    {
+        if (e.Value != null && !string.IsNullOrWhiteSpace(e.Value.ToString()))
+        {
+            Input.StateId = Convert.ToInt32(e.Value);
+            cities = (await masterService.GetCities(Input.StateId)).Data;
         }
     }
 }

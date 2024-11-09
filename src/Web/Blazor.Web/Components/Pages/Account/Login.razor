@@ -1,4 +1,5 @@
 ﻿@page "/login"
+@using Blazor.Web.Areas.Identity.Pages.Account
 
 
 <section class="vh-100">
@@ -60,8 +61,9 @@
 </section>
 
 @code {
-    [Inject]
-    NavigationManager NavigationManager { get; set; }
+    [Inject] NavigationManager NavigationManager { get; set; }
+    [Inject] IUserService _userService { get; set; }
+
     public LoginDto loginModal { get; set; } = new();
     public string errorMessage = string.Empty;
 
@@ -69,7 +71,18 @@
     {
         try
         {
-            NavigationManager!.NavigateTo($"/identity/account/authentication?name={loginModal.UserName}&password={loginModal.Password}", true);
+            var loginModel = new LoginDto
+                {
+                    UserName = loginModal.UserName,
+                    Password = loginModal.Password,
+                    RememberMe = true
+                };
+            var result = await _userService.login(loginModel);
+            if (result != null && result.IsSuccess)
+            {
+                NavigationManager!.NavigateTo($"/identity/account/authentication?name={loginModal.UserName}&password={loginModal.Password}", true);
+            }
+
         }
         catch (Exception ex)
         {

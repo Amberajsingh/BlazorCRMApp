@@ -17,16 +17,12 @@ namespace Blazor.Web.Areas.Identity.Pages.Account
             _userService = userService;
         }
 
-        //[FromBody]
-        //public LoginDto loginModel { get; set; }
         [FromQuery(Name = "name")]
         public string Name { get; set; } = null!;
 
         [FromQuery(Name = "password")]
         public string Password { get; set; } = null!;
 
-        //[FromQuery(Name = "role")]
-        //public string Role { get; set; } = null!;
         public async Task<IActionResult> OnGet()
         {
             var loginModel = new LoginDto

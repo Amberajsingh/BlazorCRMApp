@@ -5,7 +5,7 @@ namespace Blazor.Web.Services
     public interface IUserService
     {
         #region [User]
-        Task<BaseApiResponseDto<UserLoginDto>> login(LoginDto model);
+        Task<BaseApiResponseDto<LoginResponseDto>> login(LoginDto model);
         Task<BaseApiResponseDto<bool>> Signup(UsersDto model);
         Task<BaseApiResponseDto<List<UsersDto>>> GetUsers();
         Task<BaseApiResponseDto<UsersDto>> GetUserById(int id);
@@ -23,9 +23,9 @@ namespace Blazor.Web.Services
             httpService.Client = _httpClient;
         }
 
-        public async Task<BaseApiResponseDto<UserLoginDto>> login(LoginDto model)
+        public async Task<BaseApiResponseDto<LoginResponseDto>> login(LoginDto model)
         {
-            return await httpService.PostAsync<UserLoginDto>("Account/login", model);
+            return await httpService.PostAsync<LoginResponseDto>("Account/login", model);
         }
 
         public async Task<BaseApiResponseDto<bool>> Signup(UsersDto model)
