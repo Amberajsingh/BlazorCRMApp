@@ -21,10 +21,14 @@ builder.Services.AddScoped<IMasterService, MasterService>();
 builder.Services.AddScoped<IUserLoginService, UserLoginService>();
 builder.Services.AddScoped<IUserService, UserService>();
 builder.Services.AddScoped<IDesignationPermissionService, DesignationPermissionService>();
+builder.Services.AddScoped<IFlagService, FlagService>();
 
 var mapperConfig = new MapperConfiguration(mc =>
 {
     mc.AddProfile(new MasterProfile());
+    mc.AddProfile(new DesignationProfile());
+    mc.AddProfile(new UserProfile());
+    mc.AddProfile(new FlagProfile());
 });
 IMapper mapper = mapperConfig.CreateMapper();
 builder.Services.AddSingleton(mapper);

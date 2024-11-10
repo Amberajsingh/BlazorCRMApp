@@ -144,7 +144,7 @@
 
 @code {
     [Inject]
-    NavigationManager NavigationManager { get; set; }
+    NavigationManager _NavigationManager { get; set; }
     [Inject] IUserService userService { get; set; }
     [Inject] IMasterService masterService { get; set; }
 
@@ -165,9 +165,11 @@
         var result = await userService.Signup(Input);
         if (result != null && result.IsSuccess)
         {
-            errorMessage = "success";
-            // IsModalOpen = false;
-            // await SaveChanged.InvokeAsync(result.Data);
+            _NavigationManager.NavigateTo("/login");
+        }
+        else
+        {
+            errorMessage = result.Message;
         }
     }
 

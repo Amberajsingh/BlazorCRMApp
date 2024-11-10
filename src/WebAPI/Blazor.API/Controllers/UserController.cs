@@ -5,6 +5,7 @@ using Blazor.API.Services;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Shared.Lib.Dto;
+using Shared.Lib.Helper;
 using Shared.Lib.Resources;
 
 namespace Blazor.API.Controllers
@@ -20,17 +21,27 @@ namespace Blazor.API.Controllers
             _mapper = mapper;
         }
 
-        [HttpGet]
-        public async Task<IActionResult> GetUsers()
+        [HttpPost]
+        public async Task<IActionResult> GetUsers([FromBody] ListingFilterDto model)
         {
             try
             {
                 List<UsersDto> responseModel = new List<UsersDto>();
 
-                var result = await  _userService.GetUsers();
-                responseModel = _mapper.Map<List<UsersDto>>(result);
+                var predicate = PredicateBuilder.True<Users>();
 
-                return SuccessResult(responseModel);
+                predicate = predicate.And(m => m.IsDeleted == false);
+
+                if (!string.IsNullOrWhiteSpace(model.Search))
+                {
+                    model.Search = model.Search.ToLower()?.Trim();
+                    predicate = predicate.And(m => m.FirstName.ToLower().StartsWith(model.Search!));
+                }
+
+                var result = _userService.GetUsers(predicate, model.OrderColumn, model.OrderDirection);
+                //responseModel = _mapper.Map<List<UsersDto>>(result);
+
+                return SuccessResult(result.ToPageList(model.PageIndex, model.PageSize));
             }
             catch (Exception exception)
             {

@@ -12,15 +12,15 @@
                                 <div class="col-6 row">
                                     <label class="col-6">Page Size: </label>
                                     <div class=" col-6">
-                                        <select class="form-control form-control-sm">
+                                        <select @onchange="OnPageChange" class="form-control form-control-sm">
                                             <option value="3">3</option>
-                                            <option value="5">5</option>
+                                            <option value="5" selected>5</option>
                                             <option value="10">10</option>
                                         </select>
                                     </div>
                                 </div>
                                 <div class="col-6">
-                                    <label><input type="search" class="form-control form-control-sm" placeholder="Search"></label>
+                                    <label><input type="search" @onchange="OnSearchChange" class="form-control form-control-sm" placeholder="Search" /></label>
                                 </div>
                             </div>
 
@@ -37,10 +37,10 @@
                     <div class="card-body">
                         <div class="dataTables_wrapper dt-bootstrap4">
                             <div class="row">
-                                <QuickGrid Items="UserList.AsQueryable()" Pagination="pagination" class="table table-bordered table-striped">
+                                <QuickGrid @ref="grid" ItemsProvider="_userResponseProvider" Pagination="pagination" class="table table-bordered table-striped">
                                     <PropertyColumn Property="@(p => p.FirstName)" Title="Name" Sortable="true" />
                                     <TemplateColumn Title="Status" Sortable="true">
-                                        @if (context.IsActive)
+                                        @if (context.Status == 1)
                                         {
                                             <span class="badge badge-success">Active</span>
                                         }

@@ -7,7 +7,7 @@ namespace Blazor.Web.Services
         #region [User]
         Task<BaseApiResponseDto<LoginResponseDto>> login(LoginDto model);
         Task<BaseApiResponseDto<bool>> Signup(UsersDto model);
-        Task<BaseApiResponseDto<List<UsersDto>>> GetUsers();
+        Task<BaseApiResponseDto<PageResponseViewModel<UserDto>>> GetUsers(ListingFilterDto filterModel);
         Task<BaseApiResponseDto<UsersDto>> GetUserById(int id);
         Task<BaseApiResponseDto<bool>> ManageUser(UsersDto model);
         Task<BaseApiResponseDto<bool>> DeleteUser(int id);
@@ -34,9 +34,9 @@ namespace Blazor.Web.Services
         }
 
         #region [User]
-        public async Task<BaseApiResponseDto<List<UsersDto>>> GetUsers()
+        public async Task<BaseApiResponseDto<PageResponseViewModel<UserDto>>> GetUsers(ListingFilterDto filterModel)
         {
-            return await httpService.GetAsync<List<UsersDto>>($"User/GetUsers");
+            return await httpService.PostAsync<PageResponseViewModel<UserDto>>($"User/GetUsers", filterModel);
         }
         public async Task<BaseApiResponseDto<UsersDto>> GetUserById(int id)
         {

@@ -39,7 +39,7 @@ namespace Blazor.Web.Components.Pages.Admin.Designation
                 var response = await masterService.GetDesignations(filterDto);
 
                 return GridItemsProviderResult.From(
-                    items: response.Data.Items,
+                    items: response.Data!.Items,
                     totalItemCount: response!.Data.TotalCount
                     );
             };

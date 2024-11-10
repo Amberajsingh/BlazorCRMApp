@@ -11,8 +11,10 @@ namespace Blazor.Web.Components.Pages.Admin.User
         public IUserService userService { get; set; }
 
         public AddEdit createRef;
-        public List<UsersDto> UserList { get; set; } = new List<UsersDto>();
-        private PaginationState pagination = new PaginationState() { ItemsPerPage = 2};
+        public QuickGrid<UserDto> grid;
+        private GridItemsProvider<UserDto>? _userResponseProvider;
+        private PaginationState pagination = new PaginationState() { ItemsPerPage = 5 };
+        private string Search { get; set; }
         protected override async Task OnInitializedAsync()
         {
             await GetList();
@@ -20,8 +22,43 @@ namespace Blazor.Web.Components.Pages.Admin.User
 
         private async Task GetList()
         {
-            var responce = await userService.GetUsers();
-            UserList = responce.Data ?? new List<UsersDto>();
+            _userResponseProvider = async req =>
+            {
+                int pageNumber = (req.StartIndex / pagination.ItemsPerPage) + 1;
+                ListingFilterDto filterDto = new()
+                {
+                    PageSize = req.Count ?? 10,
+                    PageIndex = pageNumber,
+                    Search = Search
+                };
+                var response = await userService.GetUsers(filterDto);
+
+                return GridItemsProviderResult.From(
+                    items: response.Data!.Items,
+                    totalItemCount: response!.Data.TotalCount
+                    );
+            };
+        }
+
+        public async Task OnPageChange(ChangeEventArgs e)
+        {
+            if (e.Value != null && !string.IsNullOrWhiteSpace(e.Value.ToString()))
+            {
+                pagination.ItemsPerPage = Convert.ToInt32(e.Value);
+            }
+        }
+
+        public async Task OnSearchChange(ChangeEventArgs e)
+        {
+            if (e.Value != null && !string.IsNullOrWhiteSpace(e.Value.ToString()))
+            {
+                Search = e.Value.ToString();
+            }
+            else
+            {
+                Search = string.Empty;
+            }
+            await grid!.RefreshDataAsync();
         }
 
         public void AddUser()
