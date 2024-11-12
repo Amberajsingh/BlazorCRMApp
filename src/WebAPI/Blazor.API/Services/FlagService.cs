@@ -9,10 +9,10 @@ namespace Blazor.API.Services
     {
         #region [Flag Master]
         List<FlagMaster> GetFlags(Expression<Func<FlagMaster, bool>> expression, int? OrderColumn, int? OrderDirection);
-        FlagMaster? GetFlagById(int id);
+        FlagMaster? GetFlagById(long id);
         void AddUpdate(FlagMaster CategoryModal);
-        bool DeleteFlagById(int id);
-        bool UpdateFlagStatus(int id, bool status);
+        bool DeleteFlagById(long id);
+        bool UpdateFlagStatus(long id, bool status);
         bool FlagNameAvailabiltity(long? id, string name);
         #endregion
     }
@@ -61,7 +61,7 @@ namespace Blazor.API.Services
             }
         }
 
-        public FlagMaster? GetFlagById(int id)
+        public FlagMaster? GetFlagById(long id)
         {
             try
             {
@@ -118,7 +118,7 @@ namespace Blazor.API.Services
             }
         }
 
-        public bool DeleteFlagById(int id)
+        public bool DeleteFlagById(long id)
         {
             try
             {
@@ -139,7 +139,7 @@ namespace Blazor.API.Services
             }
         }
 
-        public bool UpdateFlagStatus(int id, bool status)
+        public bool UpdateFlagStatus(long id, bool status)
         {
             try
             {

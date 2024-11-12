@@ -7,10 +7,14 @@ namespace Shared.Lib.Dto
     public class FlagRequestDto
     {
         public long Id { get; set; }
+        [Required]
         [DisplayName("Flag Name")]
-        public string FlagName { get; set; }
+        public string FlagName { get; set; } = null!;
+        [Required]
+
         [DisplayName("Flag Colour")]
-        public string FlagColor { get; set; }
+        public string FlagColor { get; set; } = null!;
+
         [DisplayName("Active")]
         public bool IsActive { get; set; }
         [DisplayName("Dynamic")]

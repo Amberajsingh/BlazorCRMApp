@@ -8,6 +8,7 @@ using System.Net;
 namespace Blazor.API.Controllers
 {
     [ApiController]
+    [Route("[controller]/[action]")]
     public class BaseController : ControllerBase
     {
         protected IActionResult SuccessResult<T>(T model, string message = "The request has been executed successfully")

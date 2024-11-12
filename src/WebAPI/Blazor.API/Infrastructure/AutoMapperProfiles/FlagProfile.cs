@@ -10,6 +10,10 @@ namespace Blazor.API.Infrastructure.AutoMapperProfiles
             CreateMap<FlagDto, FlagMaster>();
 
             CreateMap<FlagMaster, FlagDto>();
+
+            CreateMap<FlagRequestDto, FlagMaster>();
+
+            //CreateMap<FlagMaster, FlagRequestDto>();
         }
     }
 }

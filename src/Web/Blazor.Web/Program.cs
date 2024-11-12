@@ -26,6 +26,10 @@ builder.Services.AddHttpClient<IUserService, UserService>(client =>
 {
     client.BaseAddress = new Uri($"{apiGatewayURL}");
 });
+builder.Services.AddHttpClient<IFlagService, FlagService>(client =>
+{
+    client.BaseAddress = new Uri($"{apiGatewayURL}");
+});
 
 builder.Services.AddAuthentication(CookieAuthenticationDefaults.AuthenticationScheme)
     .AddCookie(option =>

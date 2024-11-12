@@ -1,23 +1,23 @@
 ﻿@using System.ComponentModel.DataAnnotations
-@inject IMasterService MasterService
+@inject IFlagService MasterService
 
-<Modal Title="@($"{(IsEdit ? "Edit" :"Add")} Designation")" IsOpen="@IsModalOpen" IsOpenChanged="HandleModalToggle">
+<Modal Title="@($"{(IsEdit ? "Edit" :"Add")} Flag")" IsOpen="@IsModalOpen" IsOpenChanged="HandleModalToggle">
     <BodyContent>
-        <EditForm Model="Input" method="post" OnValidSubmit="SubmitDesignation" FormName="Designation">
+        <EditForm Model="Input" method="post" OnValidSubmit="SubmitFlag" FormName="Flag">
             <DataAnnotationsValidator />
             <div class="row">
                 <div class="col-sm-6">
                     <div class="form-group">
                         <label for="email" class="form-label">Name</label>
-                        <InputText @bind-Value="Input.Name" class="form-control" placeholder="Designation Name" />
-                        <ValidationMessage For="() => Input.Name" class="text-danger" />
+                        <InputText @bind-Value="Input.FlagName" class="form-control" placeholder="Flag Name" />
+                        <ValidationMessage For="() => Input.FlagName" class="text-danger" />
                     </div>
                 </div>
                 <div class="col-sm-6">
                     <div class="form-group">
                         <label for="email" class="form-label">Color</label>
-                        <InputText @bind-Value="Input.Colour" class="form-control" placeholder="Color" />
-                        <ValidationMessage For="() => Input.Colour" class="text-danger" />
+                        <InputText @bind-Value="Input.FlagColor" class="form-control" placeholder="Flag Color" />
+                        <ValidationMessage For="() => Input.FlagColor" class="text-danger" />
                     </div>
                 </div>
                 <div class="col-sm-6">
@@ -39,12 +39,12 @@
     </BodyContent>
 </Modal>
 
-@code{
+@code {
     [Parameter]
     public EventCallback<bool> SaveChanged { get; set; }
 
     [SupplyParameterFromForm]
-    private DesignationRequestDto Input { get; set; } = new();
+    private FlagRequestDto Input { get; set; } = new();
 
     private bool IsEdit { get; set; } = false;
     public bool IsModalOpen { get; set; }
@@ -70,28 +70,29 @@
         await SaveChanged.InvokeAsync(false);
     }
 
-    public void AddDesignation()
+    public void AddFlag()
     {
         IsModalOpen = true;
         IsEdit = false;
         Input = new();
     }
 
-    public void EditDesignation(DesignationResponseDto model)
+    public void EditFlag(FlagDto model)
     {
         IsModalOpen = true;
         IsEdit = true;
         Input = new()
-        {
-            Id = model.Id,
-            Name = model.Name,
-            IsActive = model.IsActive
-        };
+            {
+                Id = model.Id,
+                FlagName = model.FlagName,
+                FlagColor = model.FlagColor,
+                IsActive = model.IsActive
+            };
     }
 
-    public async Task SubmitDesignation()
+    public async Task SubmitFlag()
     {
-        var result = await MasterService.ManageDesignation(Input);
+        var result = await MasterService.ManageFlag(Input);
         if (result != null && result.IsSuccess)
         {
             IsModalOpen = false;
