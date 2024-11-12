@@ -16,7 +16,7 @@
                 <div class="col-sm-6">
                     <div class="form-group">
                         <label for="email" class="form-label">Color</label>
-                        <InputText @bind-Value="Input.FlagColor" class="form-control" placeholder="Flag Color" />
+                        <InputText type="color" @bind-Value="Input.FlagColor" class="form-control" placeholder="Flag Color" />
                         <ValidationMessage For="() => Input.FlagColor" class="text-danger" />
                     </div>
                 </div>

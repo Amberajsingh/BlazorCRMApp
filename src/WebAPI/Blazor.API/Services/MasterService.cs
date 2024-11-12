@@ -112,6 +112,7 @@ namespace Blazor.API.Services
                 if (designation != null)
                 {
                     designation.Name = designationModal.Name;
+                    designation.Colour = designationModal.Colour;
                     designation.IsActive = designationModal.IsActive;
                     designation.ModifiedDate = DateTime.Now;
                     _DBContext.DesignationMaster.Update(designation);

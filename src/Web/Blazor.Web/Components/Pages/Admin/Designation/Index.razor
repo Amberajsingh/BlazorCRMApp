@@ -25,7 +25,7 @@
                             </div>
 
                             <div class="col-6">
-                                <div class="card-tools">
+                                <div class="card-tools text-right">
                                     <button @onclick="AddDesignation" class="btn btn-primary btn-sm"><i class="fa fa-plus"></i> Add</button>
                                 </div>
                             </div>
@@ -39,6 +39,7 @@
                             <div class="row">
                                 <QuickGrid @ref="grid" ItemsProvider="DesignationResponseProvider" Pagination="pagination" class=" table table-bordered table-striped">
                                     <PropertyColumn Property="@(p => p.Name)" Title="Name" Sortable="true" />
+                                    <PropertyColumn Property="@(p => p.Colour)" Title="Colour" Sortable="true" />
                                     <TemplateColumn Title="Status" Sortable="true">
                                         @if (context.IsActive)
                                         {
