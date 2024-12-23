@@ -22,6 +22,7 @@ builder.Services.AddScoped<IUserLoginService, UserLoginService>();
 builder.Services.AddScoped<IUserService, UserService>();
 builder.Services.AddScoped<IDesignationPermissionService, DesignationPermissionService>();
 builder.Services.AddScoped<IFlagService, FlagService>();
+builder.Services.AddSingleton<EmailService>();
 
 var mapperConfig = new MapperConfiguration(mc =>
 {
@@ -43,7 +44,7 @@ if (app.Environment.IsDevelopment())
 }
 
 app.UseHttpsRedirection();
-
+app.UseStaticFiles();
 app.UseAuthorization();
 
 app.MapControllers();

@@ -22,6 +22,7 @@ namespace Blazor.API.Services
         UserLogin? GetPasswordResetByLink(string passwordResetLink);
         UserLogin? GetUserByEmail(string email);
         void AddRangeUser(List<UserLogin> users);
+        UserLogin? GenerateForgotpasswordLink(string email);
     }
     public class UserLoginService : IUserLoginService
     {
@@ -124,7 +125,7 @@ namespace Blazor.API.Services
         }
         public UserLogin? GetUserById(Guid id)
         {
-            return _DBContext.UserLogin.FirstOrDefault(x => x.Id == id && x.IsDeleted == false);
+            return _DBContext.UserLogin.Include(x => x.UsersUserLogin).FirstOrDefault(x => x.Id == id && x.IsDeleted == false);
         }
 
         public UserLogin? GetPasswordResetByLink(string passwordResetLink)
@@ -136,6 +137,21 @@ namespace Blazor.API.Services
         {
             return _DBContext.UserLogin.FirstOrDefault(x => x.Username.ToLower() == email.ToLower() && x.IsDeleted == false);
         }
+
+        public UserLogin? GenerateForgotpasswordLink(string email)
+        {
+            var entity = GetUserByEmail(email);
+            if (entity != null)
+            {
+                entity.ForgetPasswordLink = Guid.NewGuid().ToString();
+                entity.ForgetPasswordExpirationDate = DateTime.Now.AddMinutes(60);
+
+                _DBContext.UserLogin.Update(entity);
+                _DBContext.SaveChanges();
+            }
+            return entity;
+        }
+
         public void AddRangeUser(List<UserLogin> users)
         {
             _DBContext.UserLogin.AddRange(users);

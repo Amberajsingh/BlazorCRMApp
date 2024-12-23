@@ -62,8 +62,14 @@ namespace Blazor.API.Services
 
                 return query.Where(expression).Select(x => new UserDto {
                     Id = x.Id,
+                    UserLoginId = x.UserLoginId,
                     FirstName = x.FirstName,
                     LastName = x.LastName,
+                    Email = x.Email,
+                    Dob = x.Dob,
+                    DesignationId = x.DesignationId,
+                    DesignationName = x.Designation !=null ? x.Designation.Name : string.Empty,
+                    IsActive = x.UserLogin.IsActive,
                 }).ToList();
             }
             catch (Exception)

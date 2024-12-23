@@ -190,6 +190,24 @@ namespace Blazor.API.Controllers
                 return ExceptionErrorResult(BaseResponseMessages.EXCEPTION, exception);
             }
         }
+
+        [HttpGet]
+        public IActionResult GetDesignationDropdown()
+        {
+            try
+            {
+                List<SelectListDto> responseModel = new List<SelectListDto>();
+
+                var result = _masterService.GetDesignation();
+                responseModel = _mapper.Map<List<SelectListDto>>(result);
+
+                return SuccessResult(responseModel);
+            }
+            catch (Exception exception)
+            {
+                return ExceptionErrorResult(BaseResponseMessages.EXCEPTION, exception);
+            }
+        }
         #endregion
     }
 }

@@ -65,9 +65,19 @@ namespace Blazor.Web.Components.Pages.Admin.User
         {
             createRef.AddUser();
         }
-        public void EditUser(UsersDto model)
+        public void EditUser(UserDto model)
         {
-            createRef.EditUser(model);
+            var editModel = new UpdateUserDto
+            {
+                Id = model.Id,
+                UserLoginId = model.UserLoginId,
+                FirstName = model.FirstName,
+                LastName = model.LastName,
+                Dob = model.Dob,
+                DesignationId = model.DesignationId,
+                
+            };
+            createRef.EditUser(editModel);
         }
 
         public async Task SaveChanges(bool isSuccess)
@@ -78,7 +88,7 @@ namespace Blazor.Web.Components.Pages.Admin.User
             }
         }
 
-        private async Task OnDelete(int id, string name)
+        private async Task OnDelete(long id, string name)
         {
             var response = await userService.DeleteUser(id);
             if (response.Data)

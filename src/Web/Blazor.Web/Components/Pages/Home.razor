@@ -3,15 +3,22 @@
 
 <PageTitle>Home</PageTitle>
 
+<AuthorizeView Roles="Admin">
+    <p>Welcome, Admin!</p>
+</AuthorizeView>
+
+<AuthorizeView Roles="User">
+    <p>Welcome, User!</p>
+</AuthorizeView>
+
 
 @* <CascadingValue Value="currentUser">
     <ParentComponent />
 </CascadingValue> *@
 @code {
-    // private string theme = "dark";
     // User currentUser = new User
     //     {
-    //         Name = "Vinod",
+    //         Name = "Amberaj",
     //         Role = "Developer"
     //     };
 }

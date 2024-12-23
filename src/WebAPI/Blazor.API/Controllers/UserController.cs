@@ -5,6 +5,7 @@ using Blazor.API.Services;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Shared.Lib.Dto;
+using Shared.Lib.Enums;
 using Shared.Lib.Helper;
 using Shared.Lib.Resources;
 
@@ -14,11 +15,13 @@ namespace Blazor.API.Controllers
     public class UserController : BaseController
     {
         private readonly IUserService _userService;
+        private readonly IUserLoginService _userLoginService;
         private readonly IMapper _mapper;
-        public UserController(IUserService userService, IMapper mapper)
+        public UserController(IUserService userService, IMapper mapper, IUserLoginService userLoginService)
         {
             _userService = userService;
             _mapper = mapper;
+            _userLoginService = userLoginService;
         }
 
         [HttpPost]
@@ -30,7 +33,7 @@ namespace Blazor.API.Controllers
 
                 var predicate = PredicateBuilder.True<Users>();
 
-                predicate = predicate.And(m => m.IsDeleted == false);
+                predicate = predicate.And(m => m.IsDeleted == false && m.UserLogin.RoleType == (int)UserRoleType.User);
 
                 if (!string.IsNullOrWhiteSpace(model.Search))
                 {
@@ -58,7 +61,7 @@ namespace Blazor.API.Controllers
 
                 var result = _userService.GetUserById(id);
                 responseModel = _mapper.Map<UsersDto>(result);
-
+                responseModel.PrifileImagePath = "https://localhost:7299/uploads/" + result.ProfilePic;
                 return SuccessResult(responseModel);
             }
             catch (Exception exception)
@@ -96,6 +99,43 @@ namespace Blazor.API.Controllers
                 _userService.SaveUsers(user);
 
                 return SuccessResult(true);
+            }
+            catch (Exception exception)
+            {
+                return ExceptionErrorResult(BaseResponseMessages.EXCEPTION, exception);
+            }
+        }
+
+        [HttpPost]
+        public async Task<IActionResult> UpdateUser([FromBody] UpdateUserDto model)
+        {
+            try
+            {
+                var userLogin = _userLoginService.GetUserById(model.UserLoginId ?? Guid.Empty);
+                if (userLogin != null)
+                {
+                    var user = userLogin.UsersUserLogin.FirstOrDefault();
+                    user.FirstName = model.FirstName;
+                    user.LastName = model.LastName ?? string.Empty;
+                    user.Dob = model.Dob;
+                    user.DesignationId = model.DesignationId;
+
+                    if (model.ProfileImage == null || model.ProfileImage.Length == 0)
+                        return BadRequest("No file uploaded.");
+
+                    var folderPath = Path.Combine("wwwroot", "uploads");
+                    Directory.CreateDirectory(folderPath);
+                    var fileName = $"{Guid.NewGuid()}.jpg";
+                    var filePath = Path.Combine(folderPath, fileName);
+
+                    await System.IO.File.WriteAllBytesAsync(filePath, model.ProfileImage);
+
+                    user.ProfilePic = fileName;
+                    _userLoginService.UpdateUserLogin(userLogin);
+                    return SuccessResult(true);
+                }
+
+                return ErrorResult("User not valid");
             }
             catch (Exception exception)
             {

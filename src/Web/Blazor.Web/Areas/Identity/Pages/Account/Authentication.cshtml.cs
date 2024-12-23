@@ -36,8 +36,10 @@ namespace Blazor.Web.Areas.Identity.Pages.Account
             {
                 var claims = new List<Claim>
                 {
+                    new Claim(ClaimTypes.NameIdentifier,result.Data.UserId.ToString()),
                     new Claim(ClaimTypes.Name,result.Data.Name),
-                    new Claim("Email", loginModel.UserName)
+                    new Claim("Email", loginModel.UserName),
+                    new Claim(ClaimTypes.Role,result.Data.Role)
                 };
 
                 var identity = new ClaimsIdentity(claims, CookieAuthenticationDefaults.AuthenticationScheme);

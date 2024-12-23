@@ -7,7 +7,7 @@ namespace Shared.Lib.Dto
 {
     public class UsersDto
     {
-        public long? Id { get; set; }
+        public long Id { get; set; }
         public Guid? UserLoginId { get; set; }
 
         [Required(ErrorMessage = "'First Name' is required")]
@@ -84,6 +84,7 @@ namespace Shared.Lib.Dto
         public bool IsVerified { get; set; } = false;
 
         public bool FormType { get; set; } = false;
+        public string? PrifileImagePath { get; set; }
     }
 
     public class Root
@@ -100,5 +101,28 @@ namespace Shared.Lib.Dto
         public List<Sub> subs { get; set; }
     }
 
+    public class UpdateUserDto
+    {
+        public long Id { get; set; }
+        public Guid? UserLoginId { get; set; }
+
+        [Required(ErrorMessage = "'First Name' is required")]
+        [DisplayName("First Name")]
+        public string FirstName { get; set; } = null!;
+
+        [DisplayName("Last Name")]
+        public string? LastName { get; set; }
+
+        [DisplayName("Date Of Birth")]
+        [Required]
+        public DateTime? Dob { get; set; }
+
+        [Required]
+        public long? DesignationId { get; set; }
+
+        public byte[] ProfileImage { get; set; }
+
+        public string? PrifileImagePath { get; set; }
+    }
 
 }

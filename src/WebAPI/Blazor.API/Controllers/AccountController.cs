@@ -18,12 +18,15 @@ namespace Blazor.API.Controllers
         private readonly IUserService _userService;
         private readonly IDesignationPermissionService _designationPermissionService;
         private readonly IMapper _mapper;
-        public AccountController(IUserLoginService userLoginService, IUserService userService, IDesignationPermissionService designationPermissionService, IMapper mapper)
+        private readonly EmailService _emailService;
+        public AccountController(IUserLoginService userLoginService, IUserService userService, IDesignationPermissionService designationPermissionService, IMapper mapper, 
+            EmailService emailService)
         {
             _userLoginService = userLoginService;
             _userService = userService;
             _designationPermissionService = designationPermissionService;
             _mapper = mapper;
+            _emailService = emailService;
         }
 
         [HttpPost]
@@ -131,10 +134,10 @@ namespace Blazor.API.Controllers
                 {
                     return BadRequestErrorResult("Your account is not activated now. Please contact to admin.");
                 }
-                //if (user.RoleType == (int)UserRoleType.User && user.DesignationId == null)
-                //{
-                //    return BadRequestErrorResult("Your designation is not defined. Please contact to admin.");
-                //}
+                if (user.RoleType == (int)UserRoleType.User && user.DesignationId == null)
+                {
+                    return BadRequestErrorResult("Your designation is not defined. Please contact to admin.");
+                }
                 //if (user.RoleType == (int)UserRoleType.User && user.ParentId == null)
                 //{
                 //    return BadRequestErrorResult("Your reporting person is not defined. Please contact to admin.");
@@ -149,9 +152,7 @@ namespace Blazor.API.Controllers
                 responseModel.Thumbprint = user.ProfileImage;
                 responseModel.Role = ((UserRoleType)user.RoleType).ToString();
                 responseModel.PrimarySid = Convert.ToString(user.Id);
-                responseModel.RoleId = "";
-                responseModel.Short_Url = "";
-                responseModel.TimeZone = "";
+                responseModel.RoleId = user.RoleType.ToString();
                 responseModel.Logo = "";
                 responseModel.designationPermission = string.Join(",", userPermissionIds);
                 responseModel.DateTimeFormat = "dd/MM/yyyy";
@@ -162,6 +163,39 @@ namespace Blazor.API.Controllers
             {
                 return ExceptionErrorResult(BaseResponseMessages.EXCEPTION, exception);
             }
+        }
+
+        [HttpPost]
+        public async Task<IActionResult> FortgotPassword([FromBody] PasswordResetRequestModel model)
+        {
+           var entity = _userLoginService.GenerateForgotpasswordLink(model.Email);
+            // Save resetRequest to the database
+
+            var resetLink = $"https://localhost:7115/resetpassword?token={entity.ForgetPasswordLink}&email={model.Email}";
+            await _emailService.SendEmailAsync(model.Email, "Reset password", $"Reset your password: <a href='{resetLink}'>Click here</a>");
+
+            return Ok(new { IsSuccess = true, Message ="Reset password link send your email address, Pleease check and reset your password."});
+        }
+
+        [HttpPost]
+        public async Task<IActionResult> ResetPassword([FromBody] ResetPasswordModel model)
+        {
+            // Validate the token and email
+            var resetRequest = _userLoginService.GetUserByEmail(model.Email);
+
+            if (resetRequest == null || resetRequest.ForgetPasswordExpirationDate < DateTime.UtcNow || resetRequest.ForgetPasswordLink != model.Token)
+            {
+                return Ok(new { IsSuccess =false, Message ="Invalid or expired token." });
+            }
+
+            string salt = PasswordHasher.GenerateSalt();
+            resetRequest.Password = PasswordHasher.GeneratePassword(model.NewPassword, salt);
+            resetRequest.PasswordSalt = salt;
+            resetRequest.ForgetPasswordLink = "";
+
+            _userLoginService.UpdateUserLogin(resetRequest);
+
+            return Ok(new { IsSuccess = true, Message = "Password changes successfully." });
         }
     }
 }

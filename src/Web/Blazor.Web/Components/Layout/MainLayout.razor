@@ -14,7 +14,9 @@
                 </div>
 
                 <article class="content px-4">
-                    @Body
+                    <CascadingValue Value="currentUser">
+                        @Body
+                    </CascadingValue>
                 </article>
             </main>
         </div>
@@ -28,23 +30,26 @@
     <a class="dismiss">🗙</a>
 </div>
 
-@code{
+@code {
     [Inject]
-    NavigationManager navigationManager {get;set;}
+    NavigationManager navigationManager { get; set; }
 
     [CascadingParameter]
     private Task<AuthenticationState> authenticationStateTask { get; set; }
+
+    private UserViewModel currentUser = new();
 
     protected override async void OnAfterRender(bool firstRender)
     {
         if (firstRender)
         {
             var response = await authenticationStateTask;
-
-            if (response.User.Identity.IsAuthenticated)
+            var user = response.User;
+            if (user.Identity.IsAuthenticated)
             {
-                // userName = response.User.Identity.Name;
-                // email = response.User.FindFirst("Email")?.Value;
+                currentUser.UserId = Convert.ToInt64(user.FindFirst(ClaimTypes.NameIdentifier)?.Value ?? "0");
+                currentUser.Name = user.Identity.Name;
+                currentUser.Role = user.FindFirst(ClaimTypes.Role)?.Value;
             }
             else
             {

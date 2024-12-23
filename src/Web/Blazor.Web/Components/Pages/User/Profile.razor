@@ -1,0 +1,111 @@
+﻿@page "/profile"
+
+
+<EditForm Model="Input" method="post" OnValidSubmit="SubmitUser" FormName="User">
+    <DataAnnotationsValidator />
+    @if (!string.IsNullOrWhiteSpace(Message))
+    {
+        <div class="d-flex flex-row align-items-center justify-content-center justify-content-lg-start">
+            <div class="alert alert-success">@Message</div>
+        </div>
+        <br />
+    }
+    <div class="row">
+        <div class="col-sm-6">
+            <div class="form-group">
+                <label for="email" class="form-label">First Name</label>
+                <InputText @bind-Value="Input.FirstName" class="form-control" placeholder="First Name" />
+                <ValidationMessage For="() => Input.FirstName" class="text-danger" />
+            </div>
+        </div>
+        <div class="col-sm-6">
+            <div class="form-group">
+                <label for="email" class="form-label">Last Name</label>
+                <InputText @bind-Value="Input.LastName" class="form-control" placeholder="Last Name" />
+                <ValidationMessage For="() => Input.LastName" class="text-danger" />
+            </div>
+        </div>
+        <div class="col-sm-6">
+            <div class="form-group">
+                <label for="email" class="form-label">Email</label>
+                <InputDate @bind-Value="Input.Dob" class="form-control" placeholder="DOB" />
+                <ValidationMessage For="() => Input.Dob" class="text-danger" />
+            </div>
+        </div>
+        <div class="col-sm-6">
+            <div class="form-group">
+                <label for="email" class="form-label">Profile</label>
+                <InputFile @bind-Value="Input.ProfileImage" OnChange="HandleFileSelected" class="form-control" placeholder="Profile" />
+                <ValidationMessage For="() => Input.ProfileImage" class="text-danger" />
+            </div>
+        </div>
+        @if (Input.PrifileImagePath != null)
+        {
+            <img src="@Input.PrifileImagePath" alt="Profile Picture Preview" style="width:150px;" />
+        }
+    </div>
+
+    <div class="text-right">
+        <button type="submit" class="btn btn-primary">Submit</button>
+    </div>
+</EditForm>
+
+
+@code {
+    [Inject] IUserService userService { get; set; }
+
+    [CascadingParameter]
+    public UserViewModel currentUser { get; set; }
+
+    private UpdateUserDto Input { get; set; } = new();
+    private string Message { get; set; } = string.Empty;
+
+    private IBrowserFile selectedFile;
+    protected override async Task OnInitializedAsync()
+    {
+    }
+
+    protected override async void OnAfterRender(bool firstRender)
+    {
+        if (firstRender)
+        {
+            var result = await userService.GetUserById(currentUser.UserId);
+            if (result != null)
+            {
+                var model = result.Data;
+                Input = new()
+                    {
+                        Id = model.Id,
+                        FirstName = model.FirstName,
+                        LastName = model.LastName,
+                        Dob = model.Dob,
+                        DesignationId = model.DesignationId,
+                        UserLoginId = model.UserLoginId,
+                        PrifileImagePath = model.PrifileImagePath
+                    };
+
+                StateHasChanged();
+            }
+        }
+    }
+
+    private void HandleFileSelected(InputFileChangeEventArgs e)
+    {
+        selectedFile = e.File;
+    }
+
+    public async Task SubmitUser()
+    {
+        using (var stream = new MemoryStream())
+        {
+            await selectedFile.OpenReadStream(maxAllowedSize: 1024 * 1024 * 15).CopyToAsync(stream); // 15 MB limit
+            Input.ProfileImage = stream.ToArray();
+        }
+
+        var result = await userService.UpdateUser(Input);
+        if (result != null && result.IsSuccess)
+        {
+            Message = result.Message;
+        }
+    }
+}

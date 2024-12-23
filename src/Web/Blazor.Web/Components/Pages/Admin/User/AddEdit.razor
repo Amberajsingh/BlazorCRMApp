@@ -16,33 +16,31 @@
                 <div class="col-sm-6">
                     <div class="form-group">
                         <label for="email" class="form-label">Last Name</label>
-                        <InputText @bind-Value="Input.LastName" class="form-control" placeholder="First Name" />
+                        <InputText @bind-Value="Input.LastName" class="form-control" placeholder="Last Name" />
                         <ValidationMessage For="() => Input.LastName" class="text-danger" />
                     </div>
                 </div>
                 <div class="col-sm-6">
                     <div class="form-group">
                         <label for="email" class="form-label">Email</label>
-                        <InputText @bind-Value="Input.Email" class="form-control" placeholder="First Name" />
-                        <ValidationMessage For="() => Input.Email" class="text-danger" />
+                        <InputDate @bind-Value="Input.Dob" class="form-control" placeholder="DOB" />
+                        <ValidationMessage For="() => Input.Dob" class="text-danger" />
                     </div>
                 </div>
                 <div class="col-sm-6">
                     <div class="form-group">
-                        <label for="email" class="form-label">Password</label>
-                        <InputText @bind-Value="Input.Password" class="form-control" placeholder="First Name" />
-                        <ValidationMessage For="() => Input.Password" class="text-danger" />
+                        <label for="country" class="form-label">Designation</label>
+                        <InputSelect @bind-Value="Input.DesignationId" class="form-control">
+                            <option value="">Please select</option>
+                            @foreach (var designation in designations)
+                            {
+                                <option value="@designation.Value">@designation.Text</option>
+                            }
+                        </InputSelect>
+                        <ValidationMessage For="() => Input.DesignationId" class="text-danger" />
                     </div>
                 </div>
-                <div class="col-sm-6">
-                    <div class="form-group">
-                        <label for="password" class="form-label">&nbsp;</label>
-                        <div class="form-check">
-                            <InputCheckbox id="isActive" @bind-Value="Input.IsActive" class="form-check-input" type="checkbox" />
-                            <label class="form-check-label" for="isActive">Active</label>
-                        </div>
-                    </div>
-                </div>
+
             </div>
 
             <div class="modal-footer text-right">
@@ -54,17 +52,21 @@
 </Modal>
 
 @code{
+    [Inject] IMasterService masterService { get; set; }
+
     [Parameter]
     public EventCallback<bool> SaveChanged { get; set; }
 
     [SupplyParameterFromForm]
-    private UsersDto Input { get; set; } = new();
+    private UpdateUserDto Input { get; set; } = new();
 
     private bool IsEdit { get; set; } = false;
     public bool IsModalOpen { get; set; }
 
+    private List<SelectListDto> designations = new();
     protected override async Task OnInitializedAsync()
     {
+        designations = (await masterService.GetDesignationDropdown()).Data;
     }
 
     private async Task HandleModalToggle(bool isOpen)
@@ -91,7 +93,7 @@
         Input = new();
     }
 
-    public void EditUser(UsersDto model)
+    public void EditUser(UpdateUserDto model)
     {
         IsModalOpen = true;
         IsEdit = true;
@@ -99,13 +101,16 @@
         {
             Id = model.Id,
             FirstName = model.FirstName,
-            IsActive = model.IsActive
+            LastName = model.LastName,
+            Dob = model.Dob,
+            DesignationId = model.DesignationId,
+            UserLoginId = model.UserLoginId
         };
     }
 
     public async Task SubmitUser()
     {
-        var result = await userService.ManageUser(Input);
+        var result = await userService.UpdateUser(Input);
         if (result != null && result.IsSuccess)
         {
             IsModalOpen = false;

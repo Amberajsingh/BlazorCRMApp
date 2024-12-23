@@ -29,7 +29,8 @@
         public string LinkedInLink { get; set; }
         public string GooglePlusLink { get; set; }
         public bool? IsHealthNavigator { get; set; }
-
+        public long? DesignationId { get; set; }
+        public string? DesignationName { get; set; }
     }
 
     public class UserRegistrationDto
@@ -55,7 +56,7 @@
 
     public class UserUpdateDto
     {
-        public long? Id { get; set; }
+        public long Id { get; set; }
         public Guid? UserLoginId { get; set; }
         public string FirstName { get; set; }
         public string LastName { get; set; }
@@ -64,7 +65,7 @@
         public string Phone { get; set; }
         public DateTime? Dob { get; set; }
         public string ProfilePic { get; set; }
-        public byte Status { get; set; }
+        public bool IsActive { get; set; }
         public int? StateId { get; set; }
         public string State { get; set; }
         public string City { get; set; }

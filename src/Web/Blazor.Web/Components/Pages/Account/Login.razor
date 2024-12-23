@@ -28,7 +28,7 @@
 
                     <!-- Password input -->
                     <div data-mdb-input-init class="form-outline mb-3">
-                        <InputText @bind-Value="loginModal.Password" class="form-control form-control-lg"
+                        <InputText type="password" @bind-Value="loginModal.Password" class="form-control form-control-lg"
                                    placeholder="Enter password" />
                     </div>
 
@@ -40,7 +40,7 @@
                                 Remember me
                             </label>
                         </div>
-                        <a href="#!" class="text-body">Forgot password?</a>
+                        <a href="/forgotpassword" class="text-body">Forgot password?</a>
                     </div>
 
                     <div class="text-center text-lg-start mt-4 pt-2">

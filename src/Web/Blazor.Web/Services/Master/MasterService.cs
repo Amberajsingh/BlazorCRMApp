@@ -14,6 +14,8 @@ namespace Blazor.Web.Services
         Task<BaseApiResponseDto<List<SelectListDto>>> GetCountries();
         Task<BaseApiResponseDto<List<SelectListDto>>> GetStates(int countryId);
         Task<BaseApiResponseDto<List<SelectListDto>>> GetCities(int stateId);
+
+        Task<BaseApiResponseDto<List<SelectListDto>>> GetDesignationDropdown();
     }
     public class MasterService : IMasterService
     {
@@ -58,6 +60,11 @@ namespace Blazor.Web.Services
         public async Task<BaseApiResponseDto<List<SelectListDto>>> GetCities(int stateId)
         {
             return await httpService.GetAsync<List<SelectListDto>>($"Master/GetCities?stateId={stateId}");
+        }
+
+        public async Task<BaseApiResponseDto<List<SelectListDto>>> GetDesignationDropdown()
+        {
+            return await httpService.GetAsync<List<SelectListDto>>($"Master/GetDesignationDropdown");
         }
     }
 }

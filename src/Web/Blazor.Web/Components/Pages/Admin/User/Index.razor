@@ -40,7 +40,7 @@
                                 <QuickGrid @ref="grid" ItemsProvider="_userResponseProvider" Pagination="pagination" class="table table-bordered table-striped">
                                     <PropertyColumn Property="@(p => p.FirstName)" Title="Name" Sortable="true" />
                                     <TemplateColumn Title="Status" Sortable="true">
-                                        @if (context.Status == 1)
+                                        @if (context.IsActive)
                                         {
                                             <span class="badge badge-success">Active</span>
                                         }
@@ -49,12 +49,13 @@
                                             <span class="badge badge-danger">In-Active</span>
                                         }
                                     </TemplateColumn>
-                                   @*  <PropertyColumn Property="@(p => p.CreatedDate)" Title="Create Date" Sortable="true" />
-                                    <PropertyColumn Property="@(p => p.ModifiedDate)" Title="Modify Date" Sortable="true" />
+                                    <PropertyColumn Property="@(p => p.DesignationName)" Title="Designation" Sortable="true" />
+                                    @* <PropertyColumn Property="@(p => p.CreatedDate)" Title="Create Date" Sortable="true" />
+                                    <PropertyColumn Property="@(p => p.ModifiedDate)" Title="Modify Date" Sortable="true" /> *@
                                     <TemplateColumn Title="Actions">
                                         <span @onclick="@(() => EditUser(context))" class="btn btn-primary btn-sm">Edit</span>
-                                        <span @onclick="() => OnDelete(context.Id,context.Name)" class="btn btn-danger btn-sm">Delete</span>
-                                    </TemplateColumn> *@
+                                        <span @onclick="() => OnDelete(context.Id,context.FirstName)" class="btn btn-danger btn-sm">Delete</span>
+                                    </TemplateColumn>
                                 </QuickGrid>
                                 <Paginator State="pagination" />
                             </div>

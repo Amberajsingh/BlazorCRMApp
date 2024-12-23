@@ -24,6 +24,8 @@ namespace Blazor.API.Services
         List<StateMaster> GetStates(int countryId);
         List<CityMaster> GetCities(int stateId);
         List<UserTimeZones> GetTimeZones();
+
+        List<DesignationMaster> GetDesignation();
         #endregion
     }
     public class MasterService : IMasterService
@@ -217,6 +219,19 @@ namespace Blazor.API.Services
             try
             {
                 return _DBContext.UserTimeZones.ToList();
+            }
+            catch (Exception)
+            {
+                throw;
+            }
+        }
+
+
+        public List<DesignationMaster> GetDesignation()
+        {
+            try
+            {
+                return _DBContext.DesignationMaster.Where(x => x.IsActive && x.IsDeleted == false).ToList();
             }
             catch (Exception)
             {

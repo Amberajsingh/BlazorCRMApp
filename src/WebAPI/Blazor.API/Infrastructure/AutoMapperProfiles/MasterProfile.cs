@@ -27,6 +27,10 @@ namespace Blazor.API.Infrastructure.AutoMapperProfiles
             CreateMap<UserTimeZones, SelectListDto>()
                .ForMember(dest => dest.Text, opt => opt.MapFrom(src => src.TimeZone))
                .ForMember(dest => dest.Value, opt => opt.MapFrom(src => src.Id));
+
+            CreateMap<DesignationMaster, SelectListDto>()
+              .ForMember(dest => dest.Text, opt => opt.MapFrom(src => src.Name))
+              .ForMember(dest => dest.Value, opt => opt.MapFrom(src => src.Id));
         }
     }
 }
