@@ -120,7 +120,7 @@ namespace Shared.Lib.Dto
         [Required]
         public long? DesignationId { get; set; }
 
-        public byte[] ProfileImage { get; set; }
+        public byte[]? ProfileImage { get; set; }
 
         public string? PrifileImagePath { get; set; }
     }

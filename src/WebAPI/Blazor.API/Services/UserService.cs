@@ -18,6 +18,7 @@ namespace Blazor.API.Services
     {
         List<UserDto> GetUsers(Expression<Func<Users, bool>> expression, int? OrderColumn, int? OrderDirection);
         Task<List<Users>> GetUsers();
+        Task<List<Users>> GetUsers(Expression<Func<Users, bool>> expression);
         bool IsEmailExist(string email, long id);
         Users? GetUserById(long id);
         long UpdateUsers(Users model);
@@ -81,6 +82,11 @@ namespace Blazor.API.Services
         public async Task<List<Users>> GetUsers()
         {
             return await _DBContext.Users.ToListAsync();
+        }
+
+        public async Task<List<Users>> GetUsers(Expression<Func<Users, bool>> expression)
+        {
+            return await _DBContext.Users.Include(x => x.Designation).Where(expression).ToListAsync();
         }
 
         public bool IsEmailExist(string email, long id)

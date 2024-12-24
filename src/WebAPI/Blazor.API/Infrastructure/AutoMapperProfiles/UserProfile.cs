@@ -11,6 +11,8 @@ namespace Blazor.API.Infrastructure.AutoMapperProfiles
             CreateMap<UsersDto, Users>();
 
             CreateMap<Users, UsersDto>();
+
+            CreateMap<Users, UserDto>();
         }
     }
 }

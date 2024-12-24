@@ -9,6 +9,7 @@ namespace Blazor.Web.Services
         Task<BaseApiResponseDto<bool>> Signup(UsersDto model);
         Task<BaseApiResponseDto<PageResponseViewModel<UserDto>>> GetUsers(ListingFilterDto filterModel);
         Task<BaseApiResponseDto<UsersDto>> GetUserById(long id);
+        Task<BaseApiResponseDto<List<UserDto>>> GetAllUsers();
         Task<BaseApiResponseDto<bool>> ManageUser(UsersDto model);
         Task<BaseApiResponseDto<bool>> UpdateUser(UpdateUserDto model);
         Task<BaseApiResponseDto<bool>> DeleteUser(long id);
@@ -42,6 +43,11 @@ namespace Blazor.Web.Services
         {
             return await httpService.PostAsync<PageResponseViewModel<UserDto>>($"User/GetUsers", filterModel);
         }
+        public async Task<BaseApiResponseDto<List<UserDto>>> GetAllUsers()
+        {
+            return await httpService.GetAsync<List<UserDto>>($"User/GetAllUsers");
+        }
+
         public async Task<BaseApiResponseDto<UsersDto>> GetUserById(long id)
         {
             return await httpService.GetAsync<UsersDto>($"User/GetUserById?id={id}");

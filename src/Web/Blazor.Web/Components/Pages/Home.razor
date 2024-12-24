@@ -1,17 +1,22 @@
 ﻿@page "/"
+@inject IJSRuntime JSRuntime
 @* @using Blazor.Web.Components.Pages.Example *@
 
 <PageTitle>Home</PageTitle>
 
 <AuthorizeView Roles="Admin">
     <p>Welcome, Admin!</p>
+    <div class="col-3">
+        <canvas id="donutChart"></canvas>
+    </div>
 </AuthorizeView>
 
 <AuthorizeView Roles="User">
     <p>Welcome, User!</p>
 </AuthorizeView>
 
-
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+<script src="/js/chart.js"></script>
 @* <CascadingValue Value="currentUser">
     <ParentComponent />
 </CascadingValue> *@
@@ -21,4 +26,33 @@
     //         Name = "Amberaj",
     //         Role = "Developer"
     //     };
+    [CascadingParameter]
+    public UserViewModel currentUser { get; set; }
+
+    [Inject] IUserService userService { get; set; }
+
+    private List<UserDto> users;
+
+    protected override async Task OnInitializedAsync()
+    {
+    }
+
+    protected override async Task OnAfterRenderAsync(bool firstRender)
+    {
+        if (firstRender)
+        {
+            if (currentUser.Role == UserRoleType.Admin.ToString())
+            {
+                var result = await userService.GetAllUsers();
+                users = result.Data;
+
+                var Designations = users?.Select(u => u.DesignationName)?.Distinct()?.ToArray();
+                var userCounts = users?.GroupBy(u => u.DesignationName)?.Select(g => g.Count())?.ToArray();
+
+                await JSRuntime.InvokeVoidAsync("createDonutChart", Designations, userCounts);
+            }
+
+        }
+    }
+
 }

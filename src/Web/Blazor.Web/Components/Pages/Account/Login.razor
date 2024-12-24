@@ -82,7 +82,10 @@
             {
                 NavigationManager!.NavigateTo($"/identity/account/authentication?name={loginModal.UserName}&password={loginModal.Password}", true);
             }
-
+            else
+            {
+                errorMessage = result.Message;
+            }
         }
         catch (Exception ex)
         {

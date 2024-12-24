@@ -24,11 +24,11 @@
                                 </div>
                             </div>
 
-                            <div class="col-6">
+                          @*   <div class="col-6">
                                 <div class="card-tools text-right">
                                     <button @onclick="AddUser" class="btn btn-primary btn-sm"><i class="fa fa-plus"></i> Add</button>
                                 </div>
-                            </div>
+                            </div> *@
                             <!-- Page Size Selector -->
 
                         </div>
@@ -54,7 +54,7 @@
                                     <PropertyColumn Property="@(p => p.ModifiedDate)" Title="Modify Date" Sortable="true" /> *@
                                     <TemplateColumn Title="Actions">
                                         <span @onclick="@(() => EditUser(context))" class="btn btn-primary btn-sm">Edit</span>
-                                        <span @onclick="() => OnDelete(context.Id,context.FirstName)" class="btn btn-danger btn-sm">Delete</span>
+                                        @* <span @onclick="() => OnDelete(context.Id,context.FirstName)" class="btn btn-danger btn-sm">Delete</span> *@
                                     </TemplateColumn>
                                 </QuickGrid>
                                 <Paginator State="pagination" />

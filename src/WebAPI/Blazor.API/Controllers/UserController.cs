@@ -8,6 +8,7 @@ using Shared.Lib.Dto;
 using Shared.Lib.Enums;
 using Shared.Lib.Helper;
 using Shared.Lib.Resources;
+using System;
 
 namespace Blazor.API.Controllers
 {
@@ -45,6 +46,27 @@ namespace Blazor.API.Controllers
                 //responseModel = _mapper.Map<List<UsersDto>>(result);
 
                 return SuccessResult(result.ToPageList(model.PageIndex, model.PageSize));
+            }
+            catch (Exception exception)
+            {
+                return ExceptionErrorResult(BaseResponseMessages.EXCEPTION, exception);
+            }
+        }
+
+        [HttpGet]
+        public async Task<IActionResult> GetAllUsers()
+        {
+            try
+            {
+                List<UserDto> responseModel = new List<UserDto>();
+                var predicate = PredicateBuilder.True<Users>();
+
+                predicate = predicate.And(m => m.IsDeleted == false && m.UserLogin.RoleType == (int)UserRoleType.User);
+
+                var result = await _userService.GetUsers(predicate);
+                responseModel = _mapper.Map<List<UserDto>>(result);
+
+                return SuccessResult(responseModel);
             }
             catch (Exception exception)
             {
@@ -120,17 +142,18 @@ namespace Blazor.API.Controllers
                     user.Dob = model.Dob;
                     user.DesignationId = model.DesignationId;
 
-                    if (model.ProfileImage == null || model.ProfileImage.Length == 0)
-                        return BadRequest("No file uploaded.");
+                    if (model.ProfileImage != null || (model.ProfileImage != null && model.ProfileImage.Length > 0))
+                    {
+                        var folderPath = Path.Combine("wwwroot", "uploads");
+                        Directory.CreateDirectory(folderPath);
+                        var fileName = $"{Guid.NewGuid()}.jpg";
+                        var filePath = Path.Combine(folderPath, fileName);
 
-                    var folderPath = Path.Combine("wwwroot", "uploads");
-                    Directory.CreateDirectory(folderPath);
-                    var fileName = $"{Guid.NewGuid()}.jpg";
-                    var filePath = Path.Combine(folderPath, fileName);
+                        await System.IO.File.WriteAllBytesAsync(filePath, model.ProfileImage);
 
-                    await System.IO.File.WriteAllBytesAsync(filePath, model.ProfileImage);
-
-                    user.ProfilePic = fileName;
+                        user.ProfilePic = fileName;
+                    }
+                   
                     _userLoginService.UpdateUserLogin(userLogin);
                     return SuccessResult(true);
                 }
